@@ -1,0 +1,92 @@
+---
+description: This document provides a comprehensive guide to the Wayko mobile application project. For complete details, please refer to the source documents:         - Product Requirements Document: [product-requirements-document.md](mdc:product-requirements-document.md)         - Tech Stack: [tech-stack.md](mdc:tech-stack.md)
+alwaysApply: false
+---
+<rule name="WaykoProjectOverview">
+    <description>
+        This document provides a comprehensive guide to the Wayko mobile application project. For complete details, please refer to the source documents:
+        - Product Requirements Document: [product-requirements-document.md](mdc:product-requirements-document.md)
+        - Tech Stack: [tech-stack.md](mdc:tech-stack.md)
+    </description>
+
+    <section name="ProductVision">
+        <principle name="Mission">To provide travelers with a powerful yet simple solution to organize, centralize, and track their trips, allowing them to plan less and enjoy their travels more.</principle>
+        <principle name="CoreValue">Wayko eliminates the stress of travel planning by consolidating all essential information (flights, hotels, expenses) into an intuitive interface under the motto: Plan less. Enjoy more.</principle>
+    </section>
+
+    <section name="CoreFeatures">
+        <feature id="1" name="Onboarding & Trip Creation">A simple flow for users to define a trip's name, destination, dates, travelers, and budget.</feature>
+        <feature id="2" name="My Trips Dashboard">A central screen displaying all past, present, and future trips as interactive cards.</feature>
+        <feature id="3" name="Automatic Itinerary Generation">Users forward booking confirmation emails to a unique trip-specific email address (e.g., cancun-xyz@wayko.app). The system automatically parses these emails to build a chronological itinerary and track expenses.</feature>
+        <feature id="4" name="Consolidated Trip View">A detailed screen for each trip showing upcoming events, quick access to transport/hotel/rental bookings, a detailed itinerary, and a document hub.</feature>
+        <feature id="5" name="Effortless Expense Tracking">Automated financial overview with categorized expenses and a budget vs. actual comparison.</feature>
+    </section>
+
+    <section name="ChosenTechStack">
+        <stack type="CorePlatform">
+            <tech name="MobileFramework">React Native (with Expo)</tech>
+            <tech name="BackendDatabase">Supabase (Postgres, Auth, Storage, Edge Functions)</tech>
+        </stack>
+        <stack type="UIStyling">
+            <tech name="StylingEngine">NativeWind</tech>
+            <tech name="ComponentStrategy">Custom-built components</tech>
+            <tech name="BottomSheets">Gorhom Bottom Sheet</tech>
+        </stack>
+        <stack type="KeyLibraries">
+            <library name="Navigation">expo-router</library>
+            <library name="FormManagement">react-hook-form</library>
+            <library name="DatePicker">react-native-modal-datetime-picker</library>
+            <library name="Icons">@expo/vector-icons</library>
+            <library name="FileHandling">expo-document-picker &amp; expo-image-picker</library>
+        </stack>
+        <stack type="ExternalServices">
+            <service name="EmailParsing">Mailgun or SendGrid</service>
+            <service name="FlightAlerts">A third-party Flight API</service>
+            <service name="PushNotifications">Expo Push Notifications</service>
+        </stack>
+    </section>
+</rule>
+<rule name="WaykoProjectOverview">
+    <description>
+        This document provides a comprehensive guide to the Wayko mobile application project. For complete details, please refer to the source documents:
+        - Product Requirements Document: [product-requirements-document.md](mdc:product-requirements-document.md)
+        - Tech Stack: [tech-stack.md](mdc:tech-stack.md)
+    </description>
+
+    <section name="ProductVision">
+        <principle name="Mission">To provide travelers with a powerful yet simple solution to organize, centralize, and track their trips, allowing them to plan less and enjoy their travels more.</principle>
+        <principle name="CoreValue">Wayko eliminates the stress of travel planning by consolidating all essential information (flights, hotels, expenses) into an intuitive interface under the motto: Plan less. Enjoy more.</principle>
+    </section>
+
+    <section name="CoreFeatures">
+        <feature id="1" name="Onboarding & Trip Creation">A simple flow for users to define a trip's name, destination, dates, travelers, and budget.</feature>
+        <feature id="2" name="My Trips Dashboard">A central screen displaying all past, present, and future trips as interactive cards.</feature>
+        <feature id="3" name="Automatic Itinerary Generation">Users forward booking confirmation emails to a unique trip-specific email address (e.g., cancun-xyz@wayko.app). The system automatically parses these emails to build a chronological itinerary and track expenses.</feature>
+        <feature id="4" name="Consolidated Trip View">A detailed screen for each trip showing upcoming events, quick access to transport/hotel/rental bookings, a detailed itinerary, and a document hub.</feature>
+        <feature id="5" name="Effortless Expense Tracking">Automated financial overview with categorized expenses and a budget vs. actual comparison.</feature>
+    </section>
+
+    <section name="ChosenTechStack">
+        <stack type="CorePlatform">
+            <tech name="MobileFramework">React Native (with Expo)</tech>
+            <tech name="BackendDatabase">Supabase (Postgres, Auth, Storage, Edge Functions)</tech>
+        </stack>
+        <stack type="UIStyling">
+            <tech name="StylingEngine">NativeWind</tech>
+            <tech name="ComponentStrategy">Custom-built components</tech>
+            <tech name="BottomSheets">Gorhom Bottom Sheet</tech>
+        </stack>
+        <stack type="KeyLibraries">
+            <library name="Navigation">expo-router</library>
+            <library name="FormManagement">react-hook-form</library>
+            <library name="DatePicker">react-native-modal-datetime-picker</library>
+            <library name="Icons">@expo/vector-icons</library>
+            <library name="FileHandling">expo-document-picker &amp; expo-image-picker</library>
+        </stack>
+        <stack type="ExternalServices">
+            <service name="EmailParsing">Mailgun or SendGrid</service>
+            <service name="FlightAlerts">A third-party Flight API</service>
+            <service name="PushNotifications">Expo Push Notifications</service>
+        </stack>
+    </section>
+</rule>

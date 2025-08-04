@@ -1,0 +1,91 @@
+---
+description: Architecture of the project
+alwaysApply: false
+---
+<rule name="ArchitecturalPrinciples">
+    <description>
+        This project adheres to a strict modular and component-based architecture to ensure maintainability and scalability. Avoid monolithic files at all costs.
+    </description>
+
+    <section name="FileAndComponentStructure">
+        <principle name="OneComponentPerFile">Every React component must be in its own file. The file name should match the component name (e.g., `FlightInfoCard.tsx`).</principle>
+        <principle name="AtomicComponents">Break down complex UI elements into smaller, reusable "atomic" components. For example, a complex card should be composed of smaller components for its header, body, and footer.</principle>
+        <principle name="FocusedComponents">A component should do one thing well. If a component has too much logic or its state becomes complex, it's a sign it needs to be broken down further.</principle>
+    </section>
+
+    <section name="DirectoryStructure">
+        <description>Organize the application into a clear directory structure to separate concerns. A recommended structure is:</description>
+        <code>
+/app
+  /(_layout).tsx
+  /(tabs)
+    /index.tsx         # My Trips Screen
+    /create-trip.tsx   # Create Trip Screen
+    /profile.tsx       # Profile Screen
+  /trip
+    /[id].tsx          # Trip Detail Screen
+/components
+  /common            # Universal, reusable components (Button, Input, etc.)
+  /trip              # Components specific to trips (TripCard, FlightInfoCard)
+  /itinerary         # Components for the itinerary feature
+/lib
+  /hooks             # Custom React hooks
+  /utils             # Utility functions (date formatting, etc.)
+/constants
+  /theme.ts          # Colors, spacing, typography for NativeWind
+        </code>
+    </section>
+
+    <section name="StateManagement">
+        <principle name="LocalState">For local/component state, use React's built-in `useState` and `useReducer` hooks.</principle>
+        <principle name="GlobalState">For cross-component state, prefer using React Context for simplicity. If the app's state management needs become more complex, a dedicated library like Zustand or Jotai could be considered, but start with the simplest approach first. Avoid prop-drilling.</principle>
+    </section>
+
+    <section name="LogicVsPresentation">
+        <principle name="SeparationOfConcerns">Separate business logic from presentational components. Use custom hooks (`useTripData`, `useAuth`) to handle data fetching, state manipulation, and other logic.</principle>
+        <principle name="PresentationalComponents">Presentational components should receive data and functions as props and be primarily concerned with rendering the UI. This makes them more reusable and easier to test.</principle>
+    </section>
+</rule><rule name="ArchitecturalPrinciples">
+    <description>
+        This project adheres to a strict modular and component-based architecture to ensure maintainability and scalability. Avoid monolithic files at all costs.
+    </description>
+
+    <section name="FileAndComponentStructure">
+        <principle name="OneComponentPerFile">Every React component must be in its own file. The file name should match the component name (e.g., `FlightInfoCard.tsx`).</principle>
+        <principle name="AtomicComponents">Break down complex UI elements into smaller, reusable "atomic" components. For example, a complex card should be composed of smaller components for its header, body, and footer.</principle>
+        <principle name="FocusedComponents">A component should do one thing well. If a component has too much logic or its state becomes complex, it's a sign it needs to be broken down further.</principle>
+    </section>
+
+    <section name="DirectoryStructure">
+        <description>Organize the application into a clear directory structure to separate concerns. A recommended structure is:</description>
+        <code>
+/app
+  /(_layout).tsx
+  /(tabs)
+    /index.tsx         # My Trips Screen
+    /create-trip.tsx   # Create Trip Screen
+    /profile.tsx       # Profile Screen
+  /trip
+    /[id].tsx          # Trip Detail Screen
+/components
+  /common            # Universal, reusable components (Button, Input, etc.)
+  /trip              # Components specific to trips (TripCard, FlightInfoCard)
+  /itinerary         # Components for the itinerary feature
+/lib
+  /hooks             # Custom React hooks
+  /utils             # Utility functions (date formatting, etc.)
+/constants
+  /theme.ts          # Colors, spacing, typography for NativeWind
+        </code>
+    </section>
+
+    <section name="StateManagement">
+        <principle name="LocalState">For local/component state, use React's built-in `useState` and `useReducer` hooks.</principle>
+        <principle name="GlobalState">For cross-component state, prefer using React Context for simplicity. If the app's state management needs become more complex, a dedicated library like Zustand or Jotai could be considered, but start with the simplest approach first. Avoid prop-drilling.</principle>
+    </section>
+
+    <section name="LogicVsPresentation">
+        <principle name="SeparationOfConcerns">Separate business logic from presentational components. Use custom hooks (`useTripData`, `useAuth`) to handle data fetching, state manipulation, and other logic.</principle>
+        <principle name="PresentationalComponents">Presentational components should receive data and functions as props and be primarily concerned with rendering the UI. This makes them more reusable and easier to test.</principle>
+    </section>
+</rule>

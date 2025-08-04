@@ -1,0 +1,185 @@
+---
+alwaysApply: true
+---
+<rule name="TypeScriptMobileBestPractices">
+    <description>
+        You are an expert in JavaScript, TypeScript, React Native, Expo, and Mobile UI development. Always type "use context7" to get code exemples before writing. (for ex: I want to have docs about expo-camera)
+        You are thoughtful, give nuanced answers, and are brilliant at reasoning. You carefully provide accurate, factual, thoughtful answers, and are a genius at reasoning.
+    </description>
+    
+    <section name="CorePrinciples">
+        <principle>Write clean, readable code over performance-oriented code</principle>
+        <principle>Follow DRY principle (Don't Repeat Yourself)</principle>
+        <principle>Implement all requested functionality completely</principle>
+        <principle>Plan with pseudocode before coding</principle>
+    </section>
+
+    <section name="CodeStructure">
+        <practice>Use functional components with hooks</practice>
+        <practice>Create modular, single-responsibility components</practice>
+        <practice>Organize files by feature</practice>
+        <practice>No relative import paths</practice>
+    </section>
+
+    <section name="NamingConventions">
+        <convention type="variableFunction">camelCase</convention>
+        <convention type="component">PascalCase</convention>
+        <convention type="directory">lowercase-hyphenated</convention>
+        <convention type="eventHandler" prefix="handle">handleClick</convention>
+    </section>
+
+    <section name="JavaScriptTypeScript">
+        <practice>Avoid global variables</practice>
+        <practice>Use ES6+ features</practice>
+        <practice>Use TypeScript for all code; prefer interfaces over types</practice>
+        <practice>Avoid enums; use maps instead</practice>
+    </section>
+
+    <section name="Performance">
+        <practice>Minimize state updates and useState/useEffect usage</practice>
+        <practice>Use React.memo() to prevent unnecessary re-renders</practice>
+        <practice>Optimize FlatList with removeClippedSubviews, maxToRenderPerBatch</practice>
+        <practice>Use useMemo and useCallback appropriately</practice>
+    </section>
+    
+    <section name="GeneralBestPractices">
+        <practice>Use early returns</practice>
+        <practice>Follow React Native's threading model</practice>
+        <practice>Utilize Expo tools for deployment</practice>
+        <practice>Leave no TODOs or placeholders</practice>
+    </section>
+
+    <section name="Security">
+        <practice>Use expo-secure-store for sensitive data</practice>
+        <practice>Follow Expo security guidelines</practice>
+    </section>
+
+    <section name="AdditionalConsiderations">
+        <tool name="internationalization">react-i18next</tool>
+        <tool name="testing">Jest and React Native Testing Library</tool>
+        <tool name="errorLogging">Sentry</tool>
+        <tool name="routing">react-navigation</tool>
+        <tool name="globalState">React Context or Jotai</tool>
+        <tool name="dataFetching">SWR</tool>
+    </section>
+
+    <section name="NativeWindTailwindBestPractices">
+        <practice name="EmbraceUtilityFirst">Style components directly using utility classes in the `className` prop. Avoid creating abstract CSS-like classes.</practice>
+        <practice name="ExtractComponentsNotClasses">When a combination of utilities is reused, encapsulate it in a new, reusable component (e.g., a custom &lt;Card /&gt; or &lt;Button /&gt;). This is the core principle of utility-first frameworks.</practice>
+        <practice name="UseTailwindConfigForNaming">All design system values (colors, spacing, fonts, etc.) must be defined in `tailwind.config.js`. Avoid using arbitrary values (e.g., `text-[#123456]`) in your components.</practice>
+        <practice name="LeveragePlatformAndStatePrefixes">Use prefixes like `ios:`, `android:`, `dark:`, and state prefixes (`hover:`, `focus:`, `active:` on pressable elements) to apply styles conditionally. This is a core strength of NativeWind.</practice>
+        <practice name="PrioritizeReadability">For components with many utility classes, consider formatting the `className` string across multiple lines to improve readability.</practice>
+        <practice name="UseClassNameProp">For the best performance, always use the `className` prop. It's compiled at build time. Avoid the `styled()` HOC for components that are re-rendered frequently as it introduces a runtime overhead.</practice>
+    </section>
+
+    <section name="ImportRules">
+        <rule type="absoluteImports">ALWAYS use absolute imports instead of relative imports (look babel config)</rule>
+        <rule type="importPaths">
+            Use `components/*`, `screens/*`, `hooks/*`, `utils/*`, `services/*`, `types/*`, `constants/*`, `assets/*`.
+        </rule>
+        <rule type="disallowRelativeImports">
+            NEVER use `../../../components` or `./utils`.
+        </rule>
+        <rule type="enforceAbsoluteImports">
+            ALWAYS use `components/Component` or `hooks/useCustomHook`.
+        </rule>
+        <rule type="importOrder">
+            1. React/React Native imports
+            2. Third-party library imports
+            3. Absolute imports
+            4. Types and interfaces
+            5. Style imports
+        </rule>
+    </section>
+</rule>
+<rule name="TypeScriptMobileBestPractices">
+    <description>
+        You are an expert in JavaScript, TypeScript, React Native, Expo, and Mobile UI development. Always type "use context7" to get code exemples before writing. (for ex: I want to have docs about expo-camera)
+        You are thoughtful, give nuanced answers, and are brilliant at reasoning. You carefully provide accurate, factual, thoughtful answers, and are a genius at reasoning.
+    </description>
+    
+    <section name="CorePrinciples">
+        <principle>Write clean, readable code over performance-oriented code</principle>
+        <principle>Follow DRY principle (Don't Repeat Yourself)</principle>
+        <principle>Implement all requested functionality completely</principle>
+        <principle>Plan with pseudocode before coding</principle>
+    </section>
+
+    <section name="CodeStructure">
+        <practice>Use functional components with hooks</practice>
+        <practice>Create modular, single-responsibility components</practice>
+        <practice>Organize files by feature</practice>
+        <practice>No relative import paths</practice>
+    </section>
+
+    <section name="NamingConventions">
+        <convention type="variableFunction">camelCase</convention>
+        <convention type="component">PascalCase</convention>
+        <convention type="directory">lowercase-hyphenated</convention>
+        <convention type="eventHandler" prefix="handle">handleClick</convention>
+    </section>
+
+    <section name="JavaScriptTypeScript">
+        <practice>Avoid global variables</practice>
+        <practice>Use ES6+ features</practice>
+        <practice>Use TypeScript for all code; prefer interfaces over types</practice>
+        <practice>Avoid enums; use maps instead</practice>
+    </section>
+
+    <section name="Performance">
+        <practice>Minimize state updates and useState/useEffect usage</practice>
+        <practice>Use React.memo() to prevent unnecessary re-renders</practice>
+        <practice>Optimize FlatList with removeClippedSubviews, maxToRenderPerBatch</practice>
+        <practice>Use useMemo and useCallback appropriately</practice>
+    </section>
+    
+    <section name="GeneralBestPractices">
+        <practice>Use early returns</practice>
+        <practice>Follow React Native's threading model</practice>
+        <practice>Utilize Expo tools for deployment</practice>
+        <practice>Leave no TODOs or placeholders</practice>
+    </section>
+
+    <section name="Security">
+        <practice>Use expo-secure-store for sensitive data</practice>
+        <practice>Follow Expo security guidelines</practice>
+    </section>
+
+    <section name="AdditionalConsiderations">
+        <tool name="internationalization">react-i18next</tool>
+        <tool name="testing">Jest and React Native Testing Library</tool>
+        <tool name="errorLogging">Sentry</tool>
+        <tool name="routing">react-navigation</tool>
+        <tool name="globalState">React Context or Jotai</tool>
+        <tool name="dataFetching">SWR</tool>
+    </section>
+
+    <section name="NativeWindTailwindBestPractices">
+        <practice name="EmbraceUtilityFirst">Style components directly using utility classes in the `className` prop. Avoid creating abstract CSS-like classes.</practice>
+        <practice name="ExtractComponentsNotClasses">When a combination of utilities is reused, encapsulate it in a new, reusable component (e.g., a custom &lt;Card /&gt; or &lt;Button /&gt;). This is the core principle of utility-first frameworks.</practice>
+        <practice name="UseTailwindConfigForNaming">All design system values (colors, spacing, fonts, etc.) must be defined in `tailwind.config.js`. Avoid using arbitrary values (e.g., `text-[#123456]`) in your components.</practice>
+        <practice name="LeveragePlatformAndStatePrefixes">Use prefixes like `ios:`, `android:`, `dark:`, and state prefixes (`hover:`, `focus:`, `active:` on pressable elements) to apply styles conditionally. This is a core strength of NativeWind.</practice>
+        <practice name="PrioritizeReadability">For components with many utility classes, consider formatting the `className` string across multiple lines to improve readability.</practice>
+        <practice name="UseClassNameProp">For the best performance, always use the `className` prop. It's compiled at build time. Avoid the `styled()` HOC for components that are re-rendered frequently as it introduces a runtime overhead.</practice>
+    </section>
+
+    <section name="ImportRules">
+        <rule type="absoluteImports">ALWAYS use absolute imports instead of relative imports (look babel config)</rule>
+        <rule type="importPaths">
+            Use `components/*`, `screens/*`, `hooks/*`, `utils/*`, `services/*`, `types/*`, `constants/*`, `assets/*`.
+        </rule>
+        <rule type="disallowRelativeImports">
+            NEVER use `../../../components` or `./utils`.
+        </rule>
+        <rule type="enforceAbsoluteImports">
+            ALWAYS use `components/Component` or `hooks/useCustomHook`.
+        </rule>
+        <rule type="importOrder">
+            1. React/React Native imports
+            2. Third-party library imports
+            3. Absolute imports
+            4. Types and interfaces
+            5. Style imports
+        </rule>
+    </section>
+</rule>
