@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "scheme": "wayko",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -12,7 +13,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.floriancorteel2.wayko"
     },
-    "android": {},
+    "android": {
+      "package": "com.floriancorteel2.wayko"
+    },
     "web": {
       "bundler": "metro",
       "output": "static"
