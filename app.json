@@ -26,7 +26,8 @@
     "plugins": [
       "expo-router",
       "expo-dev-client",
-      "expo-image-picker"
+      "expo-image-picker",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
