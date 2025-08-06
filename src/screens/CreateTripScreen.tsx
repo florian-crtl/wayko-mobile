@@ -41,41 +41,69 @@ interface TravelerInputProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder: string;
+  autoFocus?: boolean;
 }
 
 const TravelerInput: React.FC<TravelerInputProps> = React.memo(({ 
   index, 
   value, 
   onChangeText, 
-  placeholder 
-}) => (
-  <View style={styles.travelerInputContainer}>
-    <View style={styles.travelerNumberBadge}>
-      <Text style={styles.travelerNumberText}>{index + 1}</Text>
+  placeholder,
+  autoFocus = false
+}) => {
+  const inputRef = React.useRef<TextInput>(null);
+  
+  React.useEffect(() => {
+    if (autoFocus) {
+      // Petit délai pour laisser l'animation se faire
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 350);
+    }
+  }, [autoFocus]);
+  
+  return (
+    <View style={styles.travelerInputContainer}>
+      <View style={styles.travelerNumberBadge}>
+        <Text style={styles.travelerNumberText}>{index + 1}</Text>
+      </View>
+      <TextInput
+        ref={inputRef}
+        style={styles.travelerInput}
+        placeholder={placeholder}
+        value={value}
+        onChangeText={onChangeText}
+        autoCapitalize="words"
+      />
     </View>
-    <TextInput
-      style={styles.travelerInput}
-      placeholder={placeholder}
-      value={value}
-      onChangeText={onChangeText}
-      autoCapitalize="words"
-    />
-  </View>
-));
+  );
+});
 
 // Optimized trip name input that doesn't cause re-renders
 const TripNameInput = React.memo(({ 
   value, 
   onChangeText,
   onFocus,
-  onBlur
+  onBlur,
+  isExpanded
 }: { 
   value: string; 
   onChangeText: (text: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  isExpanded?: boolean;
 }) => {
   const [isFocused, setIsFocused] = React.useState(false);
+  const inputRef = React.useRef<TextInput>(null);
+  
+  React.useEffect(() => {
+    if (isExpanded) {
+      // Petit délai pour laisser l'animation se faire
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 350);
+    }
+  }, [isExpanded]);
   
   const handleClear = React.useCallback(() => {
     onChangeText('');
@@ -94,6 +122,7 @@ const TripNameInput = React.memo(({
   return (
     <View style={styles.airbnbInputWrapper}>
       <TextInput
+        ref={inputRef}
         style={[
           styles.airbnbInput,
           isFocused && styles.airbnbInputFocused,
@@ -304,8 +333,14 @@ export default function CreateTripScreen() {
     if (isOpening && section && sectionRefs.current[section]) {
       setTimeout(() => {
         const sectionY = sectionRefs.current[section].y;
-        // Offset spécial pour la section dates qui contient un calendrier
-        const offset = section === 'dates' ? 100 : 20;
+        // Offsets spéciaux selon les sections
+        let offset = 20; // Par défaut
+        if (section === 'dates') {
+          offset = 100; // Plus d'espace pour le calendrier
+        } else if (section === 'location') {
+          offset = 80; // Plus d'espace pour voir le champ du dessus
+        }
+        
         scrollViewRef.current?.scrollTo({
           x: 0,
           y: Math.max(0, sectionY - offset),
@@ -429,6 +464,17 @@ export default function CreateTripScreen() {
     const nextIndex = (currentIndex + 1) % CURRENCIES.length;
     setCurrency(CURRENCIES[nextIndex]);
   };
+  
+  // Check if all required fields are filled
+  const isFormComplete = () => {
+    return (
+      tripName.trim() !== '' &&
+      destination.trim() !== '' &&
+      startDate !== '' &&
+      endDate !== '' &&
+      budget.trim() !== ''
+    );
+  };
 
   return (
     <KeyboardAvoidingView 
@@ -455,7 +501,13 @@ export default function CreateTripScreen() {
           <TouchableOpacity style={styles.backButton} onPress={handleBack}>
             <Ionicons name="chevron-back" size={28} color="white" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Nouveau voyage</Text>
+          <Animated.Text 
+            style={styles.headerTitle}
+            entering={FadeIn.duration(300)}
+            layout={LinearTransition.duration(200)}
+          >
+            {tripName.trim() ? tripName : 'Nouveau voyage'}
+          </Animated.Text>
         </View>
 
         {/* Form Sections */}
@@ -482,6 +534,7 @@ export default function CreateTripScreen() {
             <TripNameInput 
               value={tripName}
               onChangeText={handleTripNameChange}
+              isExpanded={expandedSection === 'name'}
             />
           </ExpandableSection>
           
@@ -497,6 +550,7 @@ export default function CreateTripScreen() {
           >
             <GooglePlacesInput
               placeholder="Rechercher une destination"
+              autoFocus={expandedSection === 'location'}
               onPlaceSelected={(data, details) => {
                 console.log('Selected destination:', data.description);
                 setDestination(data.description);
@@ -649,6 +703,7 @@ export default function CreateTripScreen() {
                 value={name}
                 onChangeText={(text) => handleTravelerNameChange(index, text)}
                 placeholder={`Prénom du voyageur ${index + 1}`}
+                autoFocus={index === 0 && expandedSection === 'guests'}
               />
             ))}
           </ExpandableSection>
@@ -689,20 +744,29 @@ export default function CreateTripScreen() {
 
         </ScrollView>
 
-        {/* Save Button - visible when budget section is expanded */}
-        {expandedSection === 'budget' && (
-          <Animated.View 
-            style={styles.footer}
-            entering={FadeIn.duration(300)}
-            layout={LinearTransition}
+        {/* Save Button - always visible, disabled when form incomplete */}
+        <Animated.View 
+          style={styles.footer}
+          entering={FadeIn.duration(300)}
+          layout={LinearTransition}
+        >
+          <TouchableOpacity
+            style={[
+              styles.createButton,
+              !isFormComplete() && styles.createButtonDisabled
+            ]}
+            onPress={isFormComplete() ? handleSave : undefined}
+            activeOpacity={isFormComplete() ? 0.8 : 1}
+            disabled={!isFormComplete()}
           >
-            <Button
-              title="Créer le voyage"
-              onPress={handleSave}
-              variant="secondary"
-            />
-          </Animated.View>
-        )}
+            <Text style={[
+              styles.createButtonText,
+              !isFormComplete() && styles.createButtonTextDisabled
+            ]}>
+              Créer le voyage
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -1085,5 +1149,31 @@ const styles = StyleSheet.create({
   footer: {
     padding: 24,
     paddingBottom: 40,
+  },
+  
+  // Create button styles
+  createButton: {
+    backgroundColor: '#3B82F6',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  createButtonDisabled: {
+    backgroundColor: '#E5E7EB',
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  createButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  createButtonTextDisabled: {
+    color: '#9CA3AF',
   },
 }); 

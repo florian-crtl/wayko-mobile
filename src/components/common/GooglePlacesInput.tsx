@@ -19,6 +19,7 @@ interface GooglePlacesInputProps {
   showSearchResults?: boolean;
   onSearchResults?: (results: PlaceData[]) => void;
   onSearchTextChange?: (text: string) => void;
+  autoFocus?: boolean;
 }
 
 export const GooglePlacesInput: React.FC<GooglePlacesInputProps> = ({
@@ -28,9 +29,20 @@ export const GooglePlacesInput: React.FC<GooglePlacesInputProps> = ({
   showSearchResults = false,
   onSearchResults,
   onSearchTextChange,
+  autoFocus = false,
 }) => {
   const [searchText, setSearchText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const inputRef = React.useRef<TextInput>(null);
+  
+  React.useEffect(() => {
+    if (autoFocus) {
+      // Petit délai pour laisser l'animation se faire
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 350);
+    }
+  }, [autoFocus]);
 
   const searchPlaces = async (query: string) => {
     if (query.length < 2) {
@@ -95,6 +107,7 @@ export const GooglePlacesInput: React.FC<GooglePlacesInputProps> = ({
           <Ionicons name="search" size={20} color="#666" />
         </View>
         <TextInput
+          ref={inputRef}
           style={styles.textInput}
           placeholder={placeholder}
           placeholderTextColor="#9CA3AF"
