@@ -742,31 +742,31 @@ export default function CreateTripScreen() {
             </View>
           </ExpandableSection>
 
-        </ScrollView>
-
-        {/* Save Button - always visible, disabled when form incomplete */}
-        <Animated.View 
-          style={styles.footer}
-          entering={FadeIn.duration(300)}
-          layout={LinearTransition}
-        >
-          <TouchableOpacity
-            style={[
-              styles.createButton,
-              !isFormComplete() && styles.createButtonDisabled
-            ]}
-            onPress={isFormComplete() ? handleSave : undefined}
-            activeOpacity={isFormComplete() ? 0.8 : 1}
-            disabled={!isFormComplete()}
+          {/* Save Button - in flow, not sticky */}
+          <Animated.View 
+            style={styles.footer}
+            entering={FadeIn.duration(300)}
+            layout={LinearTransition}
           >
-            <Text style={[
-              styles.createButtonText,
-              !isFormComplete() && styles.createButtonTextDisabled
-            ]}>
-              Créer le voyage
-            </Text>
-          </TouchableOpacity>
-        </Animated.View>
+            <TouchableOpacity
+              style={[
+                styles.createButton,
+                !isFormComplete() && styles.createButtonDisabled
+              ]}
+              onPress={isFormComplete() ? handleSave : undefined}
+              activeOpacity={isFormComplete() ? 0.8 : 1}
+              disabled={!isFormComplete()}
+            >
+              <Text style={[
+                styles.createButtonText,
+                !isFormComplete() && styles.createButtonTextDisabled
+              ]}>
+                Créer le voyage
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+
+        </ScrollView>
       </View>
     </KeyboardAvoidingView>
   );
@@ -1147,13 +1147,14 @@ const styles = StyleSheet.create({
   
   // Footer
   footer: {
-    padding: 24,
+    paddingHorizontal: 0,
+    paddingTop: 24,
     paddingBottom: 40,
   },
   
   // Create button styles
   createButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
@@ -1169,11 +1170,11 @@ const styles = StyleSheet.create({
     elevation: 0,
   },
   createButtonText: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontSize: 16,
     fontWeight: '600',
   },
   createButtonTextDisabled: {
-    color: '#9CA3AF',
+    color: '#FFFFFF',
   },
 }); 
