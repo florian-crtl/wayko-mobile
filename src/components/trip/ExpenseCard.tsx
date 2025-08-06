@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-// Temporarily removed expo-router import to fix build
+import { useNavigation } from '@react-navigation/native';
 import { Trip, ManualExpense, ExpenseBreakdown } from 'types';
+import { RootStackNavigationProp } from 'types/navigation';
 
 interface ExpenseCardProps {
   trip: Trip;
@@ -10,7 +11,7 @@ interface ExpenseCardProps {
 }
 
 const ExpenseCard: React.FC<ExpenseCardProps> = ({ trip, onAddExpense }) => {
-  // const router = useRouter(); // Removed as per edit hint
+  const navigation = useNavigation<RootStackNavigationProp>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newExpense, setNewExpense] = useState({
     title: '',
@@ -72,9 +73,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ trip, onAddExpense }) => {
   };
 
   const handleViewAllExpenses = () => {
-    // router.push(`/expenses/${trip.id}` as any); // Removed as per edit hint
-    console.log('View all expenses pressed for trip:', trip.id);
-    // TODO: Navigate to expense list
+    navigation.navigate('Expenses', { id: trip.id });
   };
 
   const formatCurrency = (amount: number) => {
