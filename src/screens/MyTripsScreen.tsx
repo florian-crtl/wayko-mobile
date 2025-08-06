@@ -1,20 +1,22 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTripContext } from '../../lib/context/TripContext';
-import { TripCardImage } from '../../components/trip/TripCardImage';
+import { useTripContext } from 'context/TripContext';
+import { TripCardImage } from 'components/trip/TripCardImage';
+import type { RootStackNavigationProp } from 'types/navigation';
 
 export default function MyTripsScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<RootStackNavigationProp>();
   const { trips, deleteTrip } = useTripContext();
 
   const handleNewTrip = () => {
-    router.push('/(tabs)/create-trip' as any);
+    // Navigate to CreateTrip tab within the Main navigator
+    navigation.navigate('Main', { screen: 'CreateTrip' });
   };
 
-  const handleViewTrip = (tripId: string) => {
-    router.push(`/trip/${tripId}` as any);
+  const handleTripPress = (tripId: string) => {
+    navigation.navigate('TripDetail', { id: tripId });
   };
 
   const handleDeleteTrip = (tripId: string, tripName: string) => {
@@ -22,14 +24,11 @@ export default function MyTripsScreen() {
       'Supprimer le voyage',
       `Êtes-vous sûr de vouloir supprimer "${tripName}" ?`,
       [
-        {
-          text: 'Annuler',
-          style: 'cancel',
-        },
-        {
-          text: 'Supprimer',
+        { text: 'Annuler', style: 'cancel' },
+        { 
+          text: 'Supprimer', 
           style: 'destructive',
-          onPress: () => deleteTrip(tripId),
+          onPress: () => deleteTrip(tripId)
         },
       ]
     );
@@ -115,7 +114,7 @@ export default function MyTripsScreen() {
           <TouchableOpacity 
             key={trip.id} 
             style={styles.tripCard}
-            onPress={() => handleViewTrip(trip.id)}
+            onPress={() => handleTripPress(trip.id)}
             activeOpacity={0.9}
           >
                             <TripCardImage 

@@ -1,7 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, StyleSheet, TextInput, ScrollView, Alert } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  StatusBar, 
+  StyleSheet, 
+  TextInput, 
+  ScrollView, 
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard
+} from 'react-native';
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
 import Animated, { 
@@ -9,14 +21,18 @@ import Animated, {
   useSharedValue, 
   useAnimatedStyle, 
   withTiming,
-  withSpring,
+  interpolate,
+  Extrapolate,
   FadeIn,
   FadeOut
 } from 'react-native-reanimated';
-import { Button } from '../../components/common/Button';
-import { useTripContext } from '../../lib/context/TripContext';
-import { generateFakeTrip } from '../../lib/utils/generateFakeTrip';
-import { GooglePlacesInput, SearchResultItem } from '../../components/common/GooglePlacesInput';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useTripContext } from 'context/TripContext';
+import { GooglePlacesInput, SearchResultItem } from 'components/common/GooglePlacesInput';
+import { Button } from 'components/common/Button';
+import { Input } from 'components/common/Input';
+import { generateFakeTrip } from 'utils/generateFakeTrip';
+import type { RootStackNavigationProp } from 'types/navigation';
 
 type ExpandedSection = 'name' | 'dates' | 'location' | 'guests' | 'budget' | null;
 
@@ -27,7 +43,7 @@ interface TravelerInputProps {
   placeholder: string;
 }
 
-const TravelerInput: React.FC<TravelerInputProps> = ({ 
+const TravelerInput: React.FC<TravelerInputProps> = React.memo(({ 
   index, 
   value, 
   onChangeText, 
@@ -45,7 +61,69 @@ const TravelerInput: React.FC<TravelerInputProps> = ({
       autoCapitalize="words"
     />
   </View>
-);
+));
+
+// Optimized trip name input that doesn't cause re-renders
+const TripNameInput = React.memo(({ 
+  value, 
+  onChangeText,
+  onFocus,
+  onBlur
+}: { 
+  value: string; 
+  onChangeText: (text: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+}) => {
+  const [isFocused, setIsFocused] = React.useState(false);
+  
+  const handleClear = React.useCallback(() => {
+    onChangeText('');
+  }, [onChangeText]);
+  
+  const handleFocus = React.useCallback(() => {
+    setIsFocused(true);
+    onFocus?.();
+  }, [onFocus]);
+  
+  const handleBlur = React.useCallback(() => {
+    setIsFocused(false);
+    onBlur?.();
+  }, [onBlur]);
+  
+  return (
+    <View style={styles.airbnbInputWrapper}>
+      <TextInput
+        style={[
+          styles.airbnbInput,
+          isFocused && styles.airbnbInputFocused,
+          value && value.length > 0 && styles.airbnbInputFilled
+        ]}
+        placeholder="Donnez un nom à votre voyage"
+        placeholderTextColor="#6B7280"
+        value={value}
+        onChangeText={onChangeText}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        autoCorrect={false}
+        autoCapitalize="words"
+        returnKeyType="done"
+        selectionColor="#000000"
+        onSubmitEditing={() => Keyboard.dismiss()}
+      />
+      {value && value.length > 0 && (
+        <View style={styles.airbnbClearButton}>
+          <TouchableOpacity 
+            onPress={handleClear}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Ionicons name="close-circle-outline" size={22} color="#6B7280" />
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+});
 
 interface CurrencyOption {
   code: string;
@@ -68,24 +146,27 @@ interface ExpandableSectionProps {
   isExpanded: boolean;
   onToggle: () => void;
   children: React.ReactNode;
+  onLayout?: (event: any) => void;
 }
 
-const ExpandableSection: React.FC<ExpandableSectionProps> = ({
+const ExpandableSection: React.FC<ExpandableSectionProps> = React.memo(({
   title,
   value,
   isExpanded,
   onToggle,
-  children
+  children,
+  onLayout
 }) => {
-  const height = useSharedValue(0);
-  const opacity = useSharedValue(0);
+  const height = useSharedValue(isExpanded ? 1 : 0);
+  const opacity = useSharedValue(isExpanded ? 1 : 0);
+  const sectionRef = useRef<View>(null);
 
   React.useEffect(() => {
     if (isExpanded) {
-      height.value = withSpring(1, { damping: 15, stiffness: 150 });
+      height.value = withTiming(1, { duration: 300 });
       opacity.value = withTiming(1, { duration: 300 });
     } else {
-      height.value = withSpring(0, { damping: 15, stiffness: 150 });
+      height.value = withTiming(0, { duration: 200 });
       opacity.value = withTiming(0, { duration: 200 });
     }
   }, [isExpanded]);
@@ -99,7 +180,12 @@ const ExpandableSection: React.FC<ExpandableSectionProps> = ({
   });
 
   return (
-    <Animated.View style={styles.section} layout={LinearTransition.duration(300)}>
+    <Animated.View 
+      ref={sectionRef}
+      style={styles.section} 
+      layout={LinearTransition.duration(300)}
+      onLayout={onLayout}
+    >
       <TouchableOpacity
         style={[styles.sectionHeader, isExpanded && styles.sectionHeaderExpanded]}
         onPress={onToggle}
@@ -122,15 +208,24 @@ const ExpandableSection: React.FC<ExpandableSectionProps> = ({
       )}
     </Animated.View>
   );
-};
+});
 
 export default function CreateTripScreen() {
-  const router = useRouter();
+  const router = useNavigation<RootStackNavigationProp>();
   const { addTrip } = useTripContext();
   const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
+  
+  // Refs pour chaque section
+  const sectionRefs = useRef<{ [key: string]: { y: number } }>({});
   
   // Form data
   const [tripName, setTripName] = useState('');
+  
+  // Memoize the callback to prevent re-renders
+  const handleTripNameChange = React.useCallback((text: string) => {
+    setTripName(text);
+  }, []);
   const [destination, setDestination] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -158,7 +253,7 @@ export default function CreateTripScreen() {
   ];
 
   const handleBack = () => {
-    router.back();
+    router.goBack();
   };
 
   const handleSave = () => {
@@ -190,16 +285,34 @@ export default function CreateTripScreen() {
       'Voyage créé !',
       `Votre voyage "${tripName}" a été créé avec succès.`,
       [
-        {
-          text: 'OK',
-          onPress: () => router.push('/(tabs)' as any)
-        }
+                  {
+            text: 'OK',
+            onPress: () => router.navigate('Main', { screen: 'MyTrips' })
+          }
       ]
     );
   };
 
   const toggleSection = (section: ExpandedSection) => {
+    // Fermer le clavier quand on change de section
+    Keyboard.dismiss();
+    
+    const isOpening = expandedSection !== section;
     setExpandedSection(expandedSection === section ? null : section);
+    
+    // Scroll vers la section après un court délai pour l'animation
+    if (isOpening && section && sectionRefs.current[section]) {
+      setTimeout(() => {
+        const sectionY = sectionRefs.current[section].y;
+        // Offset spécial pour la section dates qui contient un calendrier
+        const offset = section === 'dates' ? 100 : 20;
+        scrollViewRef.current?.scrollTo({
+          x: 0,
+          y: Math.max(0, sectionY - offset),
+          animated: true
+        });
+      }, section === 'dates' ? 350 : 100); // Plus de délai pour dates à cause de l'animation du calendrier
+    }
   };
 
   const formatDateRange = () => {
@@ -318,7 +431,11 @@ export default function CreateTripScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+    >
       <StatusBar barStyle="light-content" />
       
       {/* Background Image */}
@@ -343,10 +460,14 @@ export default function CreateTripScreen() {
 
         {/* Form Sections */}
         <ScrollView 
-        style={styles.formContainer} 
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
+          ref={scrollViewRef}
+          style={styles.formContainer} 
+          contentContainerStyle={styles.formContentContainer}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          automaticallyAdjustKeyboardInsets={true}
+        >
           
           {/* Trip Name Section */}
           <ExpandableSection
@@ -354,17 +475,14 @@ export default function CreateTripScreen() {
             value={tripName || 'Nommer votre voyage'}
             isExpanded={expandedSection === 'name'}
             onToggle={() => toggleSection('name')}
+            onLayout={(event) => {
+              sectionRefs.current['name'] = { y: event.nativeEvent.layout.y };
+            }}
           >
-            <View style={styles.searchContainer}>
-              <Ionicons name="create-outline" size={20} color="#666" style={styles.searchIcon} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="ex: Vacances à Cancun"
-                value={tripName}
-                onChangeText={setTripName}
-                autoFocus={expandedSection === 'name'}
-              />
-            </View>
+            <TripNameInput 
+              value={tripName}
+              onChangeText={handleTripNameChange}
+            />
           </ExpandableSection>
           
           {/* Location Section */}
@@ -373,6 +491,9 @@ export default function CreateTripScreen() {
             value={destination || 'Rechercher une destination'}
             isExpanded={expandedSection === 'location'}
             onToggle={() => toggleSection('location')}
+            onLayout={(event) => {
+              sectionRefs.current['location'] = { y: event.nativeEvent.layout.y };
+            }}
           >
             <GooglePlacesInput
               placeholder="Rechercher une destination"
@@ -441,6 +562,9 @@ export default function CreateTripScreen() {
             value={formatDateRange()}
             isExpanded={expandedSection === 'dates'}
             onToggle={() => toggleSection('dates')}
+            onLayout={(event) => {
+              sectionRefs.current['dates'] = { y: event.nativeEvent.layout.y };
+            }}
           >
             <View style={styles.dateOptions}>
               <TouchableOpacity style={[styles.dateOption, styles.dateOptionActive]}>
@@ -491,6 +615,9 @@ export default function CreateTripScreen() {
             value={formatGuestCount()}
             isExpanded={expandedSection === 'guests'}
             onToggle={() => toggleSection('guests')}
+            onLayout={(event) => {
+              sectionRefs.current['guests'] = { y: event.nativeEvent.layout.y };
+            }}
           >
             {/* Traveler Counter */}
             <View style={styles.counterSection}>
@@ -532,6 +659,9 @@ export default function CreateTripScreen() {
             value={formatBudget()}
             isExpanded={expandedSection === 'budget'}
             onToggle={() => toggleSection('budget')}
+            onLayout={(event) => {
+              sectionRefs.current['budget'] = { y: event.nativeEvent.layout.y };
+            }}
           >
             {/* Budget Input with Currency */}
             <View style={styles.budgetInputSection}>
@@ -559,22 +689,22 @@ export default function CreateTripScreen() {
 
         </ScrollView>
 
-        {/* Save Button */}
-        {expandedSection === null && (
+        {/* Save Button - visible when budget section is expanded */}
+        {expandedSection === 'budget' && (
           <Animated.View 
             style={styles.footer}
             entering={FadeIn.duration(300)}
             layout={LinearTransition}
           >
             <Button
-              title="Enregistrer"
+              title="Créer le voyage"
               onPress={handleSave}
               variant="secondary"
             />
           </Animated.View>
         )}
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -613,6 +743,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
   },
+  formContentContainer: {
+    paddingBottom: 150, // Espace pour le clavier et le bouton
+  },
   section: {
     marginBottom: 16,
     backgroundColor: 'white',
@@ -641,7 +774,8 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   expandedContent: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
     paddingTop: 0,
   },
   
@@ -701,19 +835,58 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   
+  // Optimized Section Styles (for trip name)
+  simpleExpandedContent: {
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  
+  // Airbnb-style Input
+  airbnbInputWrapper: {
+    position: 'relative',
+    marginTop: -4,
+    marginBottom: -8,
+    paddingHorizontal: 0,
+  },
+  airbnbInput: {
+    fontSize: 17,
+    fontWeight: '400',
+    color: '#222222',
+    paddingVertical: 16,
+    paddingHorizontal: 0,
+    paddingRight: 30, // Espace pour le bouton clear
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDDDDD',
+    backgroundColor: 'transparent',
+    width: '100%',
+  },
+  airbnbInputFocused: {
+    borderBottomColor: '#222222',
+    borderBottomWidth: 2,
+  },
+  airbnbInputFilled: {
+    fontWeight: '500',
+  },
+  airbnbClearButton: {
+    position: 'absolute',
+    right: 0,
+    top: '50%',
+    marginTop: -11,
+  },
+  
   // Dates Section Styles
   dateOptions: {
     flexDirection: 'row',
-    marginBottom: 24,
+    marginBottom: 16,
     backgroundColor: '#F3F4F6',
-    borderRadius: 12,
-    padding: 4,
+    borderRadius: 10,
+    padding: 3,
   },
   dateOption: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 8,
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 7,
   },
   dateOptionActive: {
     backgroundColor: 'white',
@@ -724,7 +897,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   dateOptionText: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#666',
   },
   dateOptionTextActive: {
@@ -732,7 +905,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   calendar: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   dateShortcuts: {
     flexDirection: 'row',

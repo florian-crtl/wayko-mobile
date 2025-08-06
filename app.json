@@ -21,21 +21,19 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static"
+      "output": "single"
     },
     "plugins": [
-      "expo-router",
       "expo-dev-client",
       "expo-image-picker",
       "expo-font"
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": false
     },
     "extra": {
-      "router": {},
       "eas": {
-        "projectId": "d675d052-7ee8-4fdf-949d-1eed32ebda85"
+        "projectId": "your-project-id"
       }
     }
   }

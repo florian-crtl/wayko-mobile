@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, StatusBar } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import React, { useState } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTripContext } from '../../lib/context/TripContext';
+import type { RootStackNavigationProp, RootStackRouteProp } from 'types/navigation';
+import { useTripContext } from 'context/TripContext';
 
 interface CategorySection {
   title: string;
@@ -18,15 +19,16 @@ interface ExpenseItem {
 }
 
 export default function ExpensesScreen() {
-  const router = useRouter();
-  const { id } = useLocalSearchParams();
+  const navigation = useNavigation<RootStackNavigationProp>();
+  const route = useRoute<RootStackRouteProp<'Expenses'>>();
+  const { id } = route.params;
   const { getTripById } = useTripContext();
   
   // Find the trip by ID
   const trip = getTripById(id as string);
 
-  const handleClose = () => {
-    router.back();
+  const handleBack = () => {
+    navigation.goBack();
   };
 
   if (!trip) {
@@ -103,8 +105,6 @@ export default function ExpensesScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
-      
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
@@ -112,7 +112,7 @@ export default function ExpensesScreen() {
             <Text style={styles.location}>{trip.destination}</Text>
             <Text style={styles.title}>Mes dépenses</Text>
           </View>
-          <TouchableOpacity onPress={handleClose}>
+          <TouchableOpacity onPress={handleBack}>
             <Text style={styles.closeButton}>Fermer</Text>
           </TouchableOpacity>
         </View>

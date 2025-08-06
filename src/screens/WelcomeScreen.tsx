@@ -1,18 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, StatusBar } from 'react-native';
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
-import { Button } from '../components/common/Button';
+import { useNavigation } from '@react-navigation/native';
+import { Button } from 'components/common/Button';
+import type { RootStackNavigationProp } from 'types/navigation';
 
 export default function WelcomeScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<RootStackNavigationProp>();
 
   const handleCreateTrip = () => {
-    // Navigate directly to the create trip tab
-    router.replace('/(tabs)/create-trip' as any);
+    // Navigate to the Main tab navigator (which will show CreateTrip tab)
+    navigation.navigate('Main', { screen: 'CreateTrip' });
   };
-
-
 
   return (
     <View style={styles.container}>
@@ -23,7 +22,7 @@ export default function WelcomeScreen() {
       <View style={styles.card}>
         {/* Background Image */}
         <Image 
-          source={require('../assets/earth.jpg')}
+          source={require('../../assets/earth.jpg')}
           style={styles.backgroundImage}
           contentFit="cover"
           placeholder="L6PZfSi_.AyE_3t7t7R**0o#DgR4"

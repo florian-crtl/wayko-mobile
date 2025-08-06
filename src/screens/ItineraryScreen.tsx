@@ -1,7 +1,8 @@
 import React from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, StatusBar } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import type { RootStackNavigationProp, RootStackRouteProp } from 'types/navigation';
 
 interface ItineraryEvent {
   type: 'flight' | 'hotel' | 'car';
@@ -160,17 +161,18 @@ const EventItem: React.FC<EventItemProps> = ({ event, isLast, onHotelPress }) =>
   );
 };
 
-export default function FullItineraryScreen() {
-  const router = useRouter();
-  const { id } = useLocalSearchParams();
+export default function ItineraryScreen() {
+  const navigation = useNavigation<RootStackNavigationProp>();
+  const route = useRoute<RootStackRouteProp<'Itinerary'>>();
+  const { id } = route.params;
 
-  const handleClose = () => {
-    router.back();
+  const handleBack = () => {
+    navigation.goBack();
   };
 
   const handleHotelPress = () => {
     // Navigate to hotel detail screen with hotel booking ID
-    router.push('/booking/hotel-1' as any);
+    navigation.navigate('BookingDetail', { id: 'hotel-1' });
   };
 
   return (
@@ -184,7 +186,7 @@ export default function FullItineraryScreen() {
             <Text style={styles.location}>Cancún, Mexique</Text>
             <Text style={styles.title}>Mon itinéraire</Text>
           </View>
-          <TouchableOpacity onPress={handleClose}>
+          <TouchableOpacity onPress={handleBack}>
             <Text style={styles.closeButton}>Fermer</Text>
           </TouchableOpacity>
         </View>

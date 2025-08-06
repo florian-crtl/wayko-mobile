@@ -1,29 +1,33 @@
 import React from 'react';
 import { Image } from 'expo-image';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import { useCityImage } from 'lib/hooks/useCityImage';
+import { useCityImage } from 'hooks/useCityImage';
 
 interface TripCardImageProps {
   destination: string;
+  priority?: 'low' | 'normal' | 'high';
 }
 
 export const TripCardImage: React.FC<TripCardImageProps> = ({ 
-  destination
+  destination,
+  priority = 'normal'
 }) => {
   const { imageUrl, isLoading } = useCityImage(destination);
-  const finalImageUrl = imageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800';
 
   return (
     <View style={styles.container}>
       <Image 
-        source={{ uri: finalImageUrl }}
+        source={{ uri: imageUrl }}
         style={styles.tripImage}
         contentFit="cover"
         placeholder="L6PZfSi_.AyE_3t7t7R**0o#DgR4"
         cachePolicy="memory-disk"
+        priority={priority}
+        transition={200}
+        recyclingKey={destination}
       />
       
-      {/* Show loading indicator for API calls */}
+      {/* Show loading indicator only for API calls */}
       {isLoading && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="small" color="rgba(255, 255, 255, 0.8)" />

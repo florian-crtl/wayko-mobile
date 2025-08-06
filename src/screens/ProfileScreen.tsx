@@ -1,18 +1,37 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Button } from '../../components/common/Button';
+import { useNavigation } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import type { RootStackNavigationProp } from 'types/navigation';
+import { Button } from 'components/common/Button';
 
 export default function ProfileScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<RootStackNavigationProp>();
 
-  const handleViewDesignSystem = () => {
-    router.push('/design-system' as any);
+  const handleBack = () => {
+    navigation.goBack();
   };
 
-  const handleLogOut = () => {
-    console.log('Log out pressed');
-    // TODO: Implement log out functionality
+  const handleLogout = () => {
+    Alert.alert(
+      'Déconnexion',
+      'Êtes-vous sûr de vouloir vous déconnecter ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        { 
+          text: 'Déconnecter', 
+          style: 'destructive',
+          onPress: () => {
+            // Handle logout logic here
+            navigation.navigate('Welcome');
+          }
+        },
+      ]
+    );
+  };
+
+  const handleViewDesignSystem = () => {
+    console.log('Design system pressed - not implemented yet');
   };
 
   return (
@@ -42,7 +61,7 @@ export default function ProfileScreen() {
           
           <Button 
             title="Log Out" 
-            onPress={handleLogOut} 
+            onPress={handleLogout} 
             variant="primary"
           />
         </View>

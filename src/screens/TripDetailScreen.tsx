@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTripContext } from '../../lib/context/TripContext';
-import { useCityImage } from '../../lib/hooks/useCityImage';
-import ExpenseCard from '../../components/trip/ExpenseCard';
-import { ManualExpense } from '../../types';
+import { useTripContext } from 'context/TripContext';
+import { useCityImage } from 'hooks/useCityImage';
+import ExpenseCard from 'components/trip/ExpenseCard';
+import { ManualExpense } from 'types';
+import type { RootStackNavigationProp, RootStackRouteProp } from 'types/navigation';
 
 const CategoryButton = ({ 
   icon, 
@@ -203,8 +204,9 @@ const DocumentsCard = () => {
 };
 
 export default function TripDetailScreen() {
-  const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const navigation = useNavigation<RootStackNavigationProp>();
+  const route = useRoute<RootStackRouteProp<'TripDetail'>>();
+  const { id } = route.params;
   const { getTripById } = useTripContext();
   
   // Find the trip by ID
@@ -222,12 +224,12 @@ export default function TripDetailScreen() {
   }
 
   const handleClose = () => {
-    router.back();
+    navigation.goBack();
   };
 
-  const handleViewFullItinerary = () => {
-    router.push(`/itinerary/${id}` as any);
-  };
+      const handleViewFullItinerary = () => {
+      navigation.navigate('Itinerary', { id });
+    };
 
   const calculateCountdown = () => {
     const today = new Date();

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Trip } from 'types';
-import { mockTrips } from 'lib/mock-data';
+import { mockTrips } from '../mock-data';
 
 interface TripContextType {
   trips: Trip[];

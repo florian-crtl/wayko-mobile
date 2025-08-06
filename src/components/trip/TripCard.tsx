@@ -1,17 +1,24 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
-import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
-import { Trip } from '../../types';
-import { useCityImage } from '../../lib/hooks/useCityImage';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { TripCardImage } from './TripCardImage';
+import type { RootStackNavigationProp } from 'types/navigation';
 
 interface TripCardProps {
-  trip: Trip;
+  trip: {
+    id: string;
+    name: string;
+    destination: string;
+    startDate: string;
+    endDate: string;
+    imageUrl?: string;
+  };
+  onDelete?: () => void;
 }
 
-export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
-  const router = useRouter();
-  const { imageUrl: cityImageUrl } = useCityImage(trip.destination);
+export const TripCard: React.FC<TripCardProps> = ({ trip, onDelete }) => {
+  const navigation = useNavigation<RootStackNavigationProp>();
 
   const calculateCountdown = () => {
     const startDate = new Date(trip.startDate);
@@ -44,17 +51,17 @@ export const TripCard: React.FC<TripCardProps> = ({ trip }) => {
   };
 
   const handlePress = () => {
-    router.push(`/trip/${trip.id}` as any);
+    navigation.navigate('TripDetail', { id: trip.id });
   };
 
   return (
     <TouchableOpacity style={styles.card} onPress={handlePress} activeOpacity={0.8}>
-      <Image 
-        source={{ uri: cityImageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800' }} 
-        style={styles.image}
-        contentFit="cover"
-        placeholder="L6PZfSi_.AyE_3t7t7R**0o#DgR4"
-      />
+      <View style={styles.imageContainer}>
+        <TripCardImage 
+          destination={trip.destination}
+          priority="high"
+        />
+      </View>
       <View style={styles.overlay} />
       <View style={styles.content}>
         <Text style={styles.title}>{trip.name}</Text>
@@ -80,6 +87,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  imageContainer: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
   },
   image: {
     width: '100%',

@@ -1,7 +1,8 @@
 import React from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, StatusBar } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import type { RootStackNavigationProp, RootStackRouteProp } from 'types/navigation';
 
 interface BookingDetailProps {
   type: 'hotel' | 'flight' | 'car';
@@ -132,13 +133,14 @@ const calculateDays = (details: BookingDetail[]) => {
 };
 
 export default function BookingDetailScreen() {
-  const router = useRouter();
-  const { id } = useLocalSearchParams();
+  const navigation = useNavigation<RootStackNavigationProp>();
+  const route = useRoute<RootStackRouteProp<'BookingDetail'>>();
+  const { id } = route.params;
   
   const booking = mockBookingData[id as string];
 
-  const handleClose = () => {
-    router.back();
+  const handleBack = () => {
+    navigation.goBack();
   };
 
   if (!booking) {
@@ -162,7 +164,7 @@ export default function BookingDetailScreen() {
             <Text style={styles.location}>{booking.location}</Text>
             <Text style={styles.title}>{booking.title}</Text>
           </View>
-          <TouchableOpacity onPress={handleClose}>
+          <TouchableOpacity onPress={handleBack}>
             <Text style={styles.closeButton}>Fermer</Text>
           </TouchableOpacity>
         </View>
